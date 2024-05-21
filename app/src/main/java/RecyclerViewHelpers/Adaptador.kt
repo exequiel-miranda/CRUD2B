@@ -10,14 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import modelo.ClaseConexion
 import modelo.dataClassMascotas
-
-
 class Adaptador(private var Datos: List<dataClassMascotas>) : RecyclerView.Adapter<ViewHolder>() {
-
-    fun ActualizarLista(nuevaLista: List<dataClassMascotas>){
-        Datos = nuevaLista
-        notifyDataSetChanged() //Esto notifica al RecyclerView que hay datos nuevos
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val vista =
