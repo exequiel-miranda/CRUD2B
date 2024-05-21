@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 //Refresco la lista
                 val nuevasMascotas = obtenerDatos()
                 withContext(Dispatchers.Main){
-                    (rcvMascotas.adapter as? Adaptador)?.ActualizarLista(nuevasMascotas)
+                    (rcvMascotas.adapter as? Adaptador)?.actualizarLista(nuevasMascotas)
                 }
             }
         }
