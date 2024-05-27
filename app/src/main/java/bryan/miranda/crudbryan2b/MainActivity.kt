@@ -79,14 +79,14 @@ class MainActivity : AppCompatActivity() {
 
         //2- Programar el boton para agregar
         btnAgregar.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.IO).    launch {
                 //1- Creo un objeto de la clase conexion
                 val objConexion = ClaseConexion().cadenaConexion()
 
                 //2- Creo una variable que contenga un PrepareStatement
                 val addMascota = objConexion?.prepareStatement("insert into tbMascotas values(?, ?, ?)")!!
                 addMascota.setString(1, txtNombre.text.toString())
-                addMascota.setInt(2, txtPeso.text.toString().toInt())
+                addMascota.setInt(2,  txtPeso.text.toString().toInt())
                 addMascota.setInt(3, txtEdad.text.toString().toInt())
                 addMascota.executeUpdate()
                 //Toast.makeText(this@MainActivity, "Mascota registrada", Toast.LENGTH_LONG).show()
