@@ -1,11 +1,13 @@
 package RecyclerViewHelper
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import bryan.miranda.crudbryan2b.R
+import bryan.miranda.crudbryan2b.detalle_mascota
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -140,6 +142,25 @@ class Adaptador(private var Datos: List<dataClassMascotas>) : RecyclerView.Adapt
             val dialog = builder.create()
             dialog.show()
         }
+
+        //Todo: Clic a la card completa
+        //Vamos a ir a otra pantalla donde me mostrará todos los datos
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+
+            //Cambiar de pantalla a la pantalla de detalle
+            val pantallaDetalle = Intent(context, detalle_mascota::class.java)
+          //enviar a la otra pantalla todos mis valores
+            pantallaDetalle.putExtra("MascotaUUID", mascota.uuid)
+            pantallaDetalle.putExtra("nombre", mascota.nombreMascota)
+            pantallaDetalle.putExtra("peso", mascota.peso)
+            pantallaDetalle.putExtra("edad", mascota.edad)
+            context.startActivity(pantallaDetalle)
+        }
+
+
+
+
     }
 
 }
