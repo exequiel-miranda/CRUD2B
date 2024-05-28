@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import modelo.ClaseConexion
 import modelo.dataClassMascotas
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,9 +58,12 @@ class MainActivity : AppCompatActivity() {
 
             //Recorro todos los registros de la base de datos
             while (resulSet.next()){
+                val uuid = resulSet.getString("uuid")
                 val nombre = resulSet.getString("nombreMascota")
+                val peso = resulSet.getInt("peso")
+                val edad = resulSet.getInt("edad")
 
-                val mascota = dataClassMascotas(nombre)
+                val mascota = dataClassMascotas(uuid, nombre, peso, edad)
                 mascotas.add(mascota)
             }
             return mascotas
@@ -79,17 +83,17 @@ class MainActivity : AppCompatActivity() {
 
         //2- Programar el boton para agregar
         btnAgregar.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).    launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 //1- Creo un objeto de la clase conexion
                 val objConexion = ClaseConexion().cadenaConexion()
 
                 //2- Creo una variable que contenga un PrepareStatement
-                val addMascota = objConexion?.prepareStatement("insert into tbMascotas values(?, ?, ?)")!!
-                addMascota.setString(1, txtNombre.text.toString())
-                addMascota.setInt(2,  txtPeso.text.toString().toInt())
-                addMascota.setInt(3, txtEdad.text.toString().toInt())
+                val addMascota = objConexion?.prepareStatement("insert into tbMascotas(uuid, nombreMascota, peso, edad) values(?, ?, ?, ?)")!!
+                addMascota.setString(1, UUID.randomUUID().toString())
+                addMascota.setString(2, txtNombre.text.toString())
+                addMascota.setInt(3,  txtPeso.text.toString().toInt())
+                addMascota.setInt(4, txtEdad.text.toString().toInt())
                 addMascota.executeUpdate()
-                //Toast.makeText(this@MainActivity, "Mascota registrada", Toast.LENGTH_LONG).show()
 
                 //Refresco la lista
                 val nuevasMascotas = obtenerDatos()

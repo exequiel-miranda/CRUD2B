@@ -1,5 +1,8 @@
 package modelo
 
 data class dataClassMascotas(
-    val nombreMascota: String
+    val uuid: String,
+    var nombreMascota: String,
+    var peso: Int,
+    var edad: Int
 )

@@ -2,6 +2,7 @@ package RecyclerViewHelper
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import bryan.miranda.crudbryan2b.R
@@ -16,6 +17,14 @@ class Adaptador(private var Datos: List<dataClassMascotas>) : RecyclerView.Adapt
         Datos = nuevaLista
         notifyDataSetChanged() // Notificar al adaptador sobre los cambios
     }
+
+    fun actualicePantalla(uuid: String, nuevoNombre: String){
+        val index = Datos.indexOfFirst { it.uuid == uuid }
+        Datos[index].nombreMascota = nuevoNombre
+        notifyDataSetChanged()
+    }  
+
+
 
     /////////////////// TODO: Eliminar datos
     fun eliminarDatos(nombreMascota: String, posicion: Int){
@@ -41,6 +50,26 @@ class Adaptador(private var Datos: List<dataClassMascotas>) : RecyclerView.Adapt
         notifyDataSetChanged()
     }
 
+    //////////////////////TODO: Editar datos
+    fun actualizarDato(nuevoNombre: String, uuid: String){
+        GlobalScope.launch(Dispatchers.IO){
+
+            //1- Creo un objeto de la clase de conexion
+            val objConexion = ClaseConexion().cadenaConexion()
+
+            //2- creo una variable que contenga un PrepareStatement
+            val updateMascota = objConexion?.prepareStatement("update tbMascotas set nombreMascota = ? where uuid = ?")!!
+            updateMascota.setString(1, nuevoNombre)
+            updateMascota.setString(2, uuid)
+            updateMascota.executeUpdate()
+
+            withContext(Dispatchers.Main){
+                actualicePantalla(uuid, nuevoNombre)
+            }
+
+        }
+    }
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -49,7 +78,12 @@ class Adaptador(private var Datos: List<dataClassMascotas>) : RecyclerView.Adapt
 
         return ViewHolder(vista)
     }
+
+
     override fun getItemCount() = Datos.size
+
+
+
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val mascota = Datos[position]
@@ -77,6 +111,34 @@ class Adaptador(private var Datos: List<dataClassMascotas>) : RecyclerView.Adapt
             val dialog = builder.create()
             dialog.show()
 
+        }
+
+        //Todo: icono de editar
+        holder.imgEditar.setOnClickListener{
+            //Creamos un Alert Dialog
+            val context = holder.itemView.context
+
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Actualizar")
+            builder.setMessage("¿Desea actualizar la mascota?")
+
+            //Agregarle un cuadro de texto para
+            //que el usuario escriba el nuevo nombre
+            val cuadroTexto = EditText(context)
+            cuadroTexto.setHint(mascota.nombreMascota)
+            builder.setView(cuadroTexto)
+
+            //Botones
+            builder.setPositiveButton("Actualizar") { dialog, which ->
+                actualizarDato(cuadroTexto.text.toString(), mascota.uuid)
+            }
+
+            builder.setNegativeButton("Cancelar"){dialog, which ->
+                dialog.dismiss()
+            }
+
+            val dialog = builder.create()
+            dialog.show()
         }
     }
 
